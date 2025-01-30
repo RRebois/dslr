@@ -7,6 +7,7 @@ matplotlib.use('Agg')  # Use the Agg backend for non-interactive use
 import matplotlib.pyplot as plt
 import time
 from tqdm import tqdm
+import pickle
 
 
 def load(path: str) -> DataFrame | None:
@@ -31,7 +32,7 @@ def sigmoid(x: np.ndarray) -> np.ndarray:
     """
     Computes the sigmoid function
     :param x: linear regression output
-    :return: np.ndarray of the sigmoid function values
+    :return: NumPy array of the sigmoid function values
     """
     return 1 / (1 + np.exp(-x))
 
@@ -50,18 +51,18 @@ def standardization(df: DataFrame, titles: list) -> np.ndarray:
     return X
 
 
-def accuracy(predictions: np.ndarray, y: np.ndarray) -> float:
+def model_accuracy(X: np.ndarray, thetas: dict, col: pd.Series) -> float:
     """
-    Computes the accuracy of the predictions.
-    :param predictions: np.ndarray of the predictions
-    :param y: np.ndarray of the responses
+    Computes the accuracy of the model.
+    :param X: NumPy array
+    :param thetas: np.ndarray of theta for the features + intercept
+    :param col: pandas Series
     :return: float
     """
-    accuracy = 0
-    for i in range(len(y)):
-        if y[i] == int(predictions[i]):
-            accuracy += 1
-    return accuracy * 100 / len(y)
+    houses = col.unique()
+    acc = np.max([sigmoid(np.dot(X, thetas[house][1:]) + thetas[house][0]) for
+                 house in houses])
+    print("Model accuracy: ", "{:.3f}".format(acc))
 
 
 def train_logreg(df: DataFrame, titles: list) -> None:
@@ -72,19 +73,18 @@ def train_logreg(df: DataFrame, titles: list) -> None:
     :return: None
     """
     lr = 0.025
-    n_iters = 1000
+    n_iters = 500
     thetas = {}
     costs = {}
 
     # Normalize data and add first col of 1 for intercept
     X = standardization(df, titles)
-    #X = np.c_[np.ones((X.shape[0], 1)), X]
 
     houses = df['Hogwarts House'].unique()
 
     # Perform oneVSall model for each class
     for house in tqdm(houses):
-        print("Training logreg for house", house)
+        print("Training logreg for class", house)
         time.sleep(1)
 
         # Assigning 1 for curr house, 0 for the rest
@@ -114,10 +114,9 @@ def train_logreg(df: DataFrame, titles: list) -> None:
             cost.append(loss)
 
             if iter % 100 == 0:
-                current_accuracy = accuracy(sigmoid(np.dot(X, theta) +
-                                                    intercept) >= 0.7, y)
-                print("iter:", iter, "cost:", "{:.2f}".format(loss),
-                      "accuracy:", "{:.2f}".format(current_accuracy))
+                #current_accuracy = accuracy(sigmoid(np.dot(X, theta) +
+                #                                    intercept) >= 0.7, y)
+                print("iter:", iter, "cost:", "{:.2f}".format(loss))
 
         thetas[house] = theta
         # Add intercept to theta values
@@ -133,8 +132,15 @@ def train_logreg(df: DataFrame, titles: list) -> None:
     plt.title('Logistic regression cost')
     plt.savefig("cost.png")
 
-    # Save theta values + calculate accuracy of the model
-    print("thetas", thetas)
+    # Computes the accuracy of the logreg
+    model_accuracy(X, thetas, df['Hogwarts House'])
+
+    # save thetas into file
+    try:
+        with open("thetas.pkl", "wb") as f:
+            pickle.dump(thetas, f)
+    except Exception:
+        raise Exception("Could not save thetas.pkl")
 
 
 def clean_data(df: DataFrame, titles: list) -> None:
@@ -144,13 +150,14 @@ def clean_data(df: DataFrame, titles: list) -> None:
     :param titles: list of features
     :return: cleaned dataframe
     """
-    #df[titles] = df[titles].ffill().bfill() or this one
+    #df[titles] = df[titles].ffill().bfill() #or this one
     df[titles] = df[titles].fillna(df[titles].mean())
 
 
 def main():
     try:
-        assert len(sys.argv) == 2, "Wrong number of arguments"
+        assert len(sys.argv) == 2, ("Wrong number of arguments"
+                                    "python3 logreg_train.py <path-to-data>")
         df = load(sys.argv[1])
         titles = [
             #'Astronomy',
