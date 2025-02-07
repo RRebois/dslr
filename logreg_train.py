@@ -3,7 +3,7 @@ from pandas import DataFrame
 import sys
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')  # Use the Agg backend for non-interactive use
+matplotlib.use('Agg')  #Agg backend for non-interactive use
 import matplotlib.pyplot as plt
 import time
 from tqdm import tqdm

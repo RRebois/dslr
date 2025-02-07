@@ -51,9 +51,9 @@ def main():
                 titles.append(col)
         plot_scatter(df, titles)
 
-        print("\nAccording to graph vizualization, Arithmancy and "
-              "Care of Magical creatures and potions should be avoided features"
-              "since they have similar distrubution for the different houses.\n"
+        print("\nAccording to graph visualization, Arithmancy, "
+              "Care of Magical creatures and Potions should be avoided features "
+              "since they have similar distribution for the different houses.\n"
               "The best features for the logistic regression are:\n"
               "Divination\nMuggle Studies\nHistory of Magic\nCharms\nFlying")
 
