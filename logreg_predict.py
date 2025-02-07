@@ -99,19 +99,19 @@ def clean_data(df: DataFrame, titles: list) -> None:
 
 def main():
     try:
-        assert len(sys.argv) == 3, ("Wrong number of arguments"
+        assert len(sys.argv) == 3, ("Wrong number of arguments, usage : "
                 "python3 logreg_train.py test_file thetas_file")
         df = load(sys.argv[1])
         titles = [
-            #'Astronomy',
-            #'Herbology',
+            'Astronomy',
+            'Herbology',
             'Divination',
             'Muggle Studies',
-            #'Ancient Runes',
-            #'History of Magic',
+            'Ancient Runes',
+            'History of Magic',
             'Transfiguration',
             'Charms',
-            #'Flying'
+            'Flying'
         ]
         df = df.iloc[:, 6:]
         df.dropna(inplace=True)

@@ -156,19 +156,19 @@ def clean_data(df: DataFrame, titles: list) -> None:
 
 def main():
     try:
-        assert len(sys.argv) == 2, ("Wrong number of arguments"
+        assert len(sys.argv) == 2, ("Wrong number of arguments, usage : "
                                     "python3 logreg_train.py <path-to-data>")
         df = load(sys.argv[1])
         titles = [
-            #'Astronomy',
-            #'Herbology',
+            'Astronomy',
+            'Herbology',
             'Divination',
             'Muggle Studies',
-            #'Ancient Runes',
-            #'History of Magic',
+            'Ancient Runes',
+            'History of Magic',
             'Transfiguration',
             'Charms',
-            #'Flying'
+            'Flying'
         ]
         #df.dropna(inplace=True)
         clean_data(df, titles) # filling the nan values with mean or drop them??
@@ -176,6 +176,7 @@ def main():
 
     except Exception as e:
         print("Error:", e)
+
 
 if __name__ == "__main__":
     main()
