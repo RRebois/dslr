@@ -30,7 +30,10 @@ We have a dataset of 1600 previous students, with 14 features to train our model
 
 ## Logistic Regression
 
+The logistic regression algorithm is a classification algorithm: it can predict the probability of an event to be true or false. In our case, it is a multi-classification, e.g. will the student be in Gryffindor, Slytherin, Ravenclaw or Hufflepuff.
+We use the One vs All method to train the model: For each house, we divide the samples in 2 groups: `1` if the student is in the house, `0` otherwise.
 
+The logistic regression model is based on the sigmoid function, which is a function that maps any real value into a value between 0 and 1.
 
 ## Ressources
 

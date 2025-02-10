@@ -79,6 +79,7 @@ def train_logreg(df: DataFrame, titles: list) -> None:
 
     # Normalize data and add first col of 1 for intercept
     X = standardization(df, titles)
+    print(f"X values: {X}")
 
     houses = df['Hogwarts House'].unique()
 
@@ -109,8 +110,7 @@ def train_logreg(df: DataFrame, titles: list) -> None:
             theta -= lr * dw
             intercept -= lr * db
 
-            loss = (-1 / len(X)) * np.sum(y * np.log(y_pred) +
-                                          (1 - y) * np.log(1 - y_pred))
+            loss = (-1 / len(X)) * np.sum(y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
             cost.append(loss)
 
             if iter % 100 == 0:
