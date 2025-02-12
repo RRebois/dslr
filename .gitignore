@@ -3,3 +3,5 @@
 .idea/*
 thetas.pkl
 houses_st.csv
+__pycache__/
+*.pyc

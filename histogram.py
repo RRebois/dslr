@@ -5,24 +5,7 @@ import seaborn as sns
 import matplotlib
 matplotlib.use('Agg')  # Use the Agg backend for non-interactive use
 import matplotlib.pyplot as plt
-
-
-def load(path: str) -> DataFrame | None:
-    """
-    takes a path as argument and returns the data set.
-    :param path: str
-    :return: DataFrame or None
-    """
-    try:
-        file = pd.read_csv(path)
-        ext = path.split(".")
-        assert ext[len(ext) - 1].upper() == "CSV", "Wrong file format"
-
-        file = pd.DataFrame(file)
-        print("Loading dataset of dimensions", file.shape)
-        return file
-    except FileNotFoundError:
-        raise FileNotFoundError(path)
+from describe import load
 
 
 def plot_histograms(df: DataFrame, titles: list) -> None:

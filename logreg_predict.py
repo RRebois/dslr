@@ -3,24 +3,7 @@ import pandas as pd
 from pandas import DataFrame
 import pickle
 import numpy as np
-
-
-def load(path: str) -> DataFrame | None:
-    """
-    takes a path as argument and returns the data set.
-    :param path: str
-    :return: DataFrame or None
-    """
-    try:
-        file = pd.read_csv(path)
-        ext = path.split(".")
-        assert ext[len(ext) - 1].upper() == "CSV", "Wrong file format"
-
-        file = pd.DataFrame(file)
-        print("Loading dataset of dimensions", file.shape)
-        return file
-    except FileNotFoundError:
-        raise FileNotFoundError(path)
+from  describe import load
 
 
 def load_thetas(s: str) -> dict:

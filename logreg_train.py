@@ -8,24 +8,7 @@ import matplotlib.pyplot as plt
 import time
 from tqdm import tqdm
 import pickle
-
-
-def load(path: str) -> DataFrame | None:
-    """
-    takes a path as argument and returns the data set.
-    :param path: str
-    :return: DataFrame or None
-    """
-    try:
-        file = pd.read_csv(path)
-        ext = path.split(".")
-        assert ext[len(ext) - 1].upper() == "CSV", "Wrong file format"
-
-        file = pd.DataFrame(file)
-        print("Loading dataset of dimensions", file.shape)
-        return file
-    except FileNotFoundError:
-        raise FileNotFoundError(path)
+from describe import load
 
 
 def sigmoid(x: np.ndarray) -> np.ndarray:
@@ -251,7 +234,7 @@ def clean_data(df: DataFrame, titles: list) -> None:
 
 
 def main():
-    # try:
+    try:
         assert len(sys.argv) == 3, ("Wrong number of arguments, usage : "
                                     "python3 logreg_train.py <path-to-data> <algorithm>")
         assert (sys.argv[2] == "batch" or sys.argv[2] == "stochastic"
@@ -273,8 +256,8 @@ def main():
         clean_data(df, titles) # filling the nan values with mean or drop them??
         train_logreg(df, titles, algo)
 
-    # except Exception as e:
-    #     print("Error:", e)
+    except Exception as e:
+        print("Error:", e)
 
 
 if __name__ == "__main__":
