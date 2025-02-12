@@ -51,7 +51,7 @@ def standardization(df: DataFrame, titles: list) -> np.ndarray:
     return X
 
 
-def model_accuracy(X: np.ndarray, thetas: dict, col: pd.Series) -> float:
+def model_accuracy(X: np.ndarray, thetas: dict, col: pd.Series):
     """
     Computes the accuracy of the model.
     :param X: NumPy array
@@ -65,7 +65,7 @@ def model_accuracy(X: np.ndarray, thetas: dict, col: pd.Series) -> float:
     print("Model accuracy: ", "{:.3f}".format(acc))
 
 
-def batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, cost: list) -> tuple:
+def batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, cost: list):
     """
     Batch gradient descent algorithm
     :param theta:
@@ -76,8 +76,8 @@ def batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, 
     :return:
     """
 
-    lr = 0.025
-    n_iters = 500
+    lr = 0.1
+    n_iters = 1000
     for iter in range(n_iters):
         y_pred = sigmoid(np.dot(X, theta) + intercept)
 
@@ -87,19 +87,55 @@ def batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, 
         theta -= lr * dw
         intercept -= lr * db
 
-        loss = (-1 / len(X)) * np.sum(
-            y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
+        loss = (-1 / len(X)) * np.sum(y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
         cost.append(loss)
 
         if iter % 100 == 0:
-            # current_accuracy = accuracy(sigmoid(np.dot(X, theta) +
-            #                                    intercept) >= 0.7, y)
             print("iter:", iter, "cost:", "{:.2f}".format(loss))
 
     return intercept, cost
 
 
-def stochastic_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, cost: list) -> tuple:
+def mini_batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, cost: list):
+    """
+    Mini-batch gradient descent algorithm
+    :param theta:
+    :param intercept:
+    :param X:
+    :param y:
+    :param cost:
+    :return:
+    """
+
+    lr = 0.01
+    n_iters = 200
+    for iter in range(n_iters):
+        batch_size = 50
+        total_loss = 0
+        for i in range(0, len(X), batch_size):
+            x_batch = X[i:i + batch_size]
+            y_batch = y[i:i + batch_size]
+
+            y_pred = sigmoid(np.dot(x_batch, theta) + intercept)
+
+            dw = (1 / len(x_batch)) * np.dot(x_batch.T, (y_pred - y_batch))
+            db = (1 / len(x_batch)) * np.sum(y_pred - y_batch)
+
+            theta -= lr * dw
+            intercept -= lr * db
+
+            loss = (-1 / len(x_batch)) * np.sum(y_batch * np.log(y_pred) + (1 - y_batch) * np.log(1 - y_pred))
+            total_loss += loss
+        avg_loss = total_loss / len(x_batch)
+        cost.append(avg_loss)
+
+        if iter % 50 == 0:
+            print("iter:", iter, "cost:", "{:.2f}".format(avg_loss))
+
+    return intercept, cost
+
+
+def stochastic_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, cost: list):
     """
     Stochastic gradient descent algorithm
     :param theta:
@@ -110,8 +146,8 @@ def stochastic_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndar
     :return:
     """
 
-    lr = 0.025
-    n_iters = 500
+    lr = 0.001
+    n_iters = 200
     for iter in range(n_iters):
         total_loss = 0
         for i in range(len(X)):
@@ -127,12 +163,13 @@ def stochastic_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndar
             theta -= lr * dw
             intercept -= lr * db
 
-            loss = y_i * np.log(y_pred) + (1 - y_i) * np.log(1 - y_pred)
+            loss = -(y_i * np.log(y_pred) + (1 - y_i) * np.log(1 - y_pred))
             total_loss += loss
-            cost.append(total_loss / len(X))
+        avg_loss = total_loss / len(X)
+        cost.append(avg_loss)
 
-            if iter % 100 == 0:
-                print("iter:", iter, "cost:", "{:.2f}".format(loss))
+        if iter % 50 == 0:
+            print("iter:", iter, "cost:", "{:.2f}".format(avg_loss))
 
     return intercept, cost
 
@@ -150,7 +187,6 @@ def train_logreg(df: DataFrame, titles: list, algo: str) -> None:
 
     # Normalize data and add first col of 1 for intercept
     X = standardization(df, titles)
-    print(f"X values: {X}")
 
     houses = df['Hogwarts House'].unique()
 
@@ -173,9 +209,11 @@ def train_logreg(df: DataFrame, titles: list, algo: str) -> None:
 
         # Gradient descent
         if algo == "batch":
-            intercept, costs = batch_gd(theta, intercept, X, y, cost)
+            intercept, cost = batch_gd(theta, intercept, X, y, cost)
+        if algo == "mini-batch":
+            intercept, cost = mini_batch_gd(theta, intercept, X, y, cost)
         elif algo == "stochastic":
-            intercept, costs = stochastic_gd(theta, intercept, X, y, cost)
+            intercept, cost = stochastic_gd(theta, intercept, X, y, cost)
 
         thetas[house] = theta
         # Add intercept to theta values
@@ -209,7 +247,6 @@ def clean_data(df: DataFrame, titles: list) -> None:
     :param titles: list of features
     :return: cleaned dataframe
     """
-    #df[titles] = df[titles].ffill().bfill() #or this one
     df[titles] = df[titles].fillna(df[titles].mean())
 
 
@@ -233,7 +270,6 @@ def main():
             'Charms',
             'Flying'
         ]
-        #df.dropna(inplace=True)
         clean_data(df, titles) # filling the nan values with mean or drop them??
         train_logreg(df, titles, algo)
 

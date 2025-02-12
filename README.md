@@ -48,6 +48,32 @@ that maps any real value into a value between 0 and 1.
 As in the linear regression, we use the gradient descent algorithm to minimize the 
 cost function and increase the accuracy of the model. 
 
+## Gradient descent algorithms
+
+There are different types of gradient descent algorithms that can be used:
+
+### Batch Gradient Descent
+
+This is the most common type of gradient descent. It calculates the gradient of the cost function 
+for the entire dataset and updates the weights at each iteration. It is very slow and 
+computationally expensive, but it is guaranteed to converge to the global minimum.
+Since it applies on all the dataset, the learning rate and the number of iterations can be set 
+respectively to 0.01-0.1 and 500-2000.
+
+### Stochastic Gradient Descent
+
+This algorithm is faster than the batch gradient descent, but it is less accurate.
+It calculates the gradient of the cost function for each sample and updates the weights at each iteration.
+It is more noisy and can converge to a local minimum, but it is more efficient for large datasets.
+The learning rate and the number of iterations can be set respectively to 0.001-0.01 and 100-500.
+
+### Mini-batch Gradient Descent
+
+This algorithm is a compromise between the batch and stochastic gradient descent.
+It calculates the gradient of the cost function for a subset of the dataset and updates the weights at each iteration.
+It is faster than the batch gradient descent and more accurate than the stochastic gradient descent.
+The learning rate and the number of iterations can be set respectively to 0.01-0.1 and 100-500.
+
 ## Usage
 
 For these programs to work, you need to have the following libraries installed:
@@ -70,3 +96,7 @@ https://www.ibm.com/fr-fr/topics/logistic-regression
 https://mrmint.fr/logistic-regression-machine-learning-introduction-simple
 
 https://www.geeksforgeeks.org/ml-stochastic-gradient-descent-sgd/
+
+https://machinelearningmastery.com/understand-the-dynamics-of-learning-rate-on-deep-learning-neural-networks/
+
+https://prasad07143.medium.com/variants-of-gradient-descent-and-their-implementation-in-python-from-scratch-2b3cceb7a1a0
