@@ -85,7 +85,7 @@ For these programs to work, you need to have the following libraries installed:
 
 - To run `logreg_train.py` :
 
-        python3 logreg_train.py data/dataset_train.csv
+        python3 logreg_train.py data/dataset_train.csv <algo>
 
 ## Ressources
 
@@ -100,3 +100,5 @@ https://www.geeksforgeeks.org/ml-stochastic-gradient-descent-sgd/
 https://machinelearningmastery.com/understand-the-dynamics-of-learning-rate-on-deep-learning-neural-networks/
 
 https://prasad07143.medium.com/variants-of-gradient-descent-and-their-implementation-in-python-from-scratch-2b3cceb7a1a0
+
+https://www.geeksforgeeks.org/principal-component-analysis-pca/

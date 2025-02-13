@@ -76,7 +76,6 @@ def clean_data(df: DataFrame, titles: list) -> None:
     :param titles: list of features
     :return: cleaned dataframe
     """
-    #df[titles] = df[titles].ffill().bfill() #or this one
     df[titles] = df[titles].fillna(df[titles].mean())
 
 
@@ -86,20 +85,20 @@ def main():
                 "python3 logreg_train.py test_file thetas_file")
         df = load(sys.argv[1])
         titles = [
-            'Astronomy',
-            'Herbology',
+            # 'Astronomy',
+            # 'Herbology',
             'Divination',
             'Muggle Studies',
             'Ancient Runes',
-            'History of Magic',
+            # 'History of Magic',
             'Transfiguration',
             'Charms',
-            'Flying'
+            # 'Flying'
         ]
         df = df.iloc[:, 6:]
         df.dropna(inplace=True)
         print(df.head())
-        #clean_data(df, titles) # filling the nan values with mean or drop them??
+        clean_data(df, titles)
         thetas = load_thetas(sys.argv[2])
         ft_predict(df, thetas, titles)
         print(df)

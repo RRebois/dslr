@@ -3,12 +3,12 @@ from pandas import DataFrame
 import sys
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')  #Agg backend for non-interactive use
 import matplotlib.pyplot as plt
 import time
 from tqdm import tqdm
 import pickle
 from describe import load
+matplotlib.use('Agg')  #Agg backend for non-interactive use
 
 
 def sigmoid(x: np.ndarray) -> np.ndarray:
@@ -56,7 +56,7 @@ def batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, 
     :param X:
     :param y:
     :param cost:
-    :return:
+    :return intercept, cost:
     """
 
     lr = 0.1
@@ -73,7 +73,7 @@ def batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, 
         loss = (-1 / len(X)) * np.sum(y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
         cost.append(loss)
 
-        if iter % 100 == 0:
+        if iter % 200 == 0:
             print("iter:", iter, "cost:", "{:.2f}".format(loss))
 
     return intercept, cost
@@ -87,7 +87,7 @@ def mini_batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndar
     :param X:
     :param y:
     :param cost:
-    :return:
+    :return intercept, cost:
     """
 
     lr = 0.01
@@ -126,7 +126,7 @@ def stochastic_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndar
     :param X:
     :param y:
     :param cost:
-    :return:
+    :return intercept, cost:
     """
 
     lr = 0.001
@@ -243,17 +243,17 @@ def main():
         algo = sys.argv[2]
         df = load(sys.argv[1])
         titles = [
-            'Astronomy',
-            'Herbology',
+            # 'Astronomy',
+            # 'Herbology',
             'Divination',
             'Muggle Studies',
             'Ancient Runes',
-            'History of Magic',
+            # 'History of Magic',
             'Transfiguration',
             'Charms',
-            'Flying'
+            # 'Flying'
         ]
-        clean_data(df, titles) # filling the nan values with mean or drop them??
+        clean_data(df, titles)
         train_logreg(df, titles, algo)
 
     except Exception as e:
