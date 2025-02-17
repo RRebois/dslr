@@ -16,7 +16,7 @@ def load(path: str) -> DataFrame | None:
         assert ext[len(ext) - 1].upper() == "CSV", "Wrong file format"
 
         file = pd.DataFrame(file)
-        print("Loading dataset of dimensions", file.shape)
+        print(f"Loading dataset of dimensions {file.shape}\n")
         return file
     except FileNotFoundError:
         raise FileNotFoundError(path)

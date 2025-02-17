@@ -45,7 +45,7 @@ def model_accuracy(X: np.ndarray, thetas: dict, col: pd.Series):
     houses = col.unique()
     acc = np.max([sigmoid(np.dot(X, thetas[house][1:]) + thetas[house][0]) for
                  house in houses])
-    print("Model accuracy: ", "{:.3f}".format(acc))
+    print("\nModel accuracy: ", "{:.3f}".format(acc))
 
 
 def batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, cost: list):
@@ -175,7 +175,7 @@ def train_logreg(df: DataFrame, titles: list, algo: str) -> None:
 
     # Perform one VS all model for each class
     for house in tqdm(houses):
-        print("Training logreg for class", house)
+        print("\n\nTraining logreg for class", house)
         time.sleep(1)
 
         # Assigning 1 for curr house, 0 for the rest
@@ -243,15 +243,11 @@ def main():
         algo = sys.argv[2]
         df = load(sys.argv[1])
         titles = [
-            # 'Astronomy',
-            # 'Herbology',
             'Divination',
             'Muggle Studies',
             'Ancient Runes',
-            # 'History of Magic',
             'Transfiguration',
             'Charms',
-            # 'Flying'
         ]
         clean_data(df, titles)
         train_logreg(df, titles, algo)

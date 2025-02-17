@@ -4,6 +4,7 @@ from pandas import DataFrame
 import pickle
 import numpy as np
 from  describe import load
+import sklearn
 
 
 def load_thetas(s: str) -> dict:
@@ -18,6 +19,17 @@ def load_thetas(s: str) -> dict:
     except FileNotFoundError:
         raise FileNotFoundError(f"No such file or directory: {s}")
     return weights
+
+
+def accuracy_calc(df: DataFrame, df_predict: DataFrame):
+    """
+    Computes the accuracy of the predictions.
+    :param df: DataFrame
+    :return: float
+    """
+    accuracy = sklearn.metrics.accuracy_score(df_predict['Hogwarts House'], df['Hogwarts House'])
+    print(f"Accuracy with sklearn library: {accuracy}\n")
+    return
 
 
 def standardization(df: DataFrame, titles: list) -> np.ndarray:
@@ -43,7 +55,7 @@ def sigmoid(x: np.ndarray) -> np.ndarray:
     return 1 / (1 + np.exp(-x))
 
 
-def ft_predict(df: DataFrame, thetas: dict, titles: list) -> None:
+def ft_predict(df: DataFrame, thetas: dict, titles: list) -> DataFrame:
     """
     Predicts the houses of students.
     :param df: dataframe
@@ -64,9 +76,9 @@ def ft_predict(df: DataFrame, thetas: dict, titles: list) -> None:
     df['Hogwarts House'] = [max(results, key=lambda house:
     results[house][i]) for i in range(len(df))]
 
-    print(df['Hogwarts House'])
-    df.insert(0, "Index", df.index) # if clean data remove this line else add it
-    df.to_csv("houses_st.csv", columns=["Index", "Hogwarts House"], index=False)
+    print(f"{df['Hogwarts House']}\n")
+    df.insert(0, "Index", df.index)
+    return df
 
 
 def clean_data(df: DataFrame, titles: list) -> None:
@@ -82,29 +94,28 @@ def clean_data(df: DataFrame, titles: list) -> None:
 def main():
     try:
         assert len(sys.argv) == 3, ("Wrong number of arguments, usage : "
-                "python3 logreg_train.py test_file thetas_file")
+                "python3 logreg_train.py <test_file> <thetas_file>")
         df = load(sys.argv[1])
         titles = [
-            # 'Astronomy',
-            # 'Herbology',
             'Divination',
             'Muggle Studies',
             'Ancient Runes',
-            # 'History of Magic',
             'Transfiguration',
             'Charms',
-            # 'Flying'
         ]
         df = df.iloc[:, 6:]
-        df.dropna(inplace=True)
-        print(df.head())
         clean_data(df, titles)
-        thetas = load_thetas(sys.argv[2])
-        ft_predict(df, thetas, titles)
         print(df)
+        thetas = load_thetas(sys.argv[2])
+        df_predict = ft_predict(df, thetas, titles)
+        df_predict.to_csv("houses_st.csv", columns=["Index", "Hogwarts House"],
+                  index=False)
+        if sys.argv[1] == "datasets/dataset_train.csv":
+            accuracy_calc(df, df_predict)
 
     except Exception as e:
         print("Error:", e)
+
 
 if __name__ == "__main__":
     main()
