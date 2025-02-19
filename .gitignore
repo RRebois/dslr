@@ -5,3 +5,5 @@ thetas.pkl
 houses_st.csv
 __pycache__/
 *.pyc
+train_data.csv
+test_data.csv

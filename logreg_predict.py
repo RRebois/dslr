@@ -27,8 +27,8 @@ def accuracy_calc(df: DataFrame, df_predict: DataFrame):
     :param df: DataFrame
     :return: float
     """
-    accuracy = sklearn.metrics.accuracy_score(df_predict['Hogwarts House'], df['Hogwarts House'])
-    print(f"Accuracy with sklearn library: {accuracy}\n")
+    accuracy = sklearn.metrics.accuracy_score(df['Hogwarts House'], df_predict['Hogwarts House'])
+    print(f"Accuracy with sklearn library: {accuracy:.3f}\n")
     return
 
 
@@ -110,7 +110,7 @@ def main():
         df_predict = ft_predict(df, thetas, titles)
         df_predict.to_csv("houses_st.csv", columns=["Index", "Hogwarts House"],
                   index=False)
-        if sys.argv[1] == "datasets/dataset_train.csv":
+        if sys.argv[1] == "test_data.csv":
             accuracy_calc(df, df_predict)
 
     except Exception as e:
