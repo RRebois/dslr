@@ -102,3 +102,5 @@ https://machinelearningmastery.com/understand-the-dynamics-of-learning-rate-on-d
 https://prasad07143.medium.com/variants-of-gradient-descent-and-their-implementation-in-python-from-scratch-2b3cceb7a1a0
 
 https://www.geeksforgeeks.org/principal-component-analysis-pca/
+
+https://www.geeksforgeeks.org/gradient-descent-algorithm-and-its-variants/

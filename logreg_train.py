@@ -8,6 +8,7 @@ import time
 from tqdm import tqdm
 import pickle
 from describe import load
+from sklearn import linear_model
 matplotlib.use('Agg')  #Agg backend for non-interactive use
 
 
@@ -28,9 +29,9 @@ def standardization(df: DataFrame, titles: list) -> np.ndarray:
     :return: NumPy array
     """
     X = df[titles].to_numpy()
-    Xmean = X.mean(axis=0)
-    Xstd = X.std(axis=0)
-    X = (X - Xmean) / Xstd
+    X_mean = X.mean(axis=0)
+    X_std = X.std(axis=0)
+    X = (X - X_mean) / X_std
     return X
 
 
@@ -59,8 +60,8 @@ def batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, 
     :return intercept, cost:
     """
 
-    lr = 0.1
-    n_iters = 1000
+    lr = 0.01
+    n_iters = 100 # to have a bad accuracy, otherwise 1000
     for iter in range(n_iters):
         y_pred = sigmoid(np.dot(X, theta) + intercept)
 
@@ -90,30 +91,27 @@ def mini_batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndar
     :return intercept, cost:
     """
 
-    lr = 0.01
+    lr = 0.05
     n_iters = 200
     for iter in range(n_iters):
+        n = np.random.randint(0, len(X))
         batch_size = 50
-        total_loss = 0
-        for i in range(0, len(X), batch_size):
-            x_batch = X[i:i + batch_size]
-            y_batch = y[i:i + batch_size]
+        x_batch = X[n:n + batch_size]
+        y_batch = y[n:n + batch_size]
 
-            y_pred = sigmoid(np.dot(x_batch, theta) + intercept)
+        y_pred = sigmoid(np.dot(x_batch, theta) + intercept)
 
-            dw = (1 / len(x_batch)) * np.dot(x_batch.T, (y_pred - y_batch))
-            db = (1 / len(x_batch)) * np.sum(y_pred - y_batch)
+        dw = (1 / len(x_batch)) * np.dot(x_batch.T, (y_pred - y_batch))
+        db = (1 / len(x_batch)) * np.sum(y_pred - y_batch)
 
-            theta -= lr * dw
-            intercept -= lr * db
+        theta -= lr * dw
+        intercept -= lr * db
 
-            loss = (-1 / len(x_batch)) * np.sum(y_batch * np.log(y_pred) + (1 - y_batch) * np.log(1 - y_pred))
-            total_loss += loss
-        avg_loss = total_loss / len(x_batch)
-        cost.append(avg_loss)
+        loss = (-1 / len(x_batch)) * np.sum(y_batch * np.log(y_pred) + (1 - y_batch) * np.log(1 - y_pred))
+        cost.append(loss)
 
         if iter % 50 == 0:
-            print("iter:", iter, "cost:", "{:.2f}".format(avg_loss))
+            print("iter:", iter, "cost:", "{:.2f}".format(loss))
 
     return intercept, cost
 
@@ -129,30 +127,26 @@ def stochastic_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndar
     :return intercept, cost:
     """
 
-    lr = 0.001
-    n_iters = 200
+    lr = 0.01
+    n_iters = 500
     for iter in range(n_iters):
-        total_loss = 0
-        for i in range(len(X)):
-            index = np.random.randint(0, len(X))
-            x_i = X[index]
-            y_i = y[index]
+        index = np.random.randint(0, len(X))
+        x_i = X[index]
+        y_i = y[index]
 
-            y_pred = sigmoid(np.dot(x_i, theta) + intercept)
+        y_pred = sigmoid(np.dot(x_i, theta) + intercept)
 
-            dw = x_i * (y_pred - y_i)
-            db = y_pred - y_i
+        dw = np.dot(x_i.T, (y_pred - y_i))
+        db = y_pred - y_i
 
-            theta -= lr * dw
-            intercept -= lr * db
+        theta -= lr * dw
+        intercept -= lr * db
 
-            loss = -(y_i * np.log(y_pred) + (1 - y_i) * np.log(1 - y_pred))
-            total_loss += loss
-        avg_loss = total_loss / len(X)
-        cost.append(avg_loss)
+        loss = -(y_i * np.log(y_pred) + (1 - y_i) * np.log(1 - y_pred))
+        cost.append(loss)
 
-        if iter % 50 == 0:
-            print("iter:", iter, "cost:", "{:.2f}".format(avg_loss))
+        if iter % 100 == 0:
+            print("iter:", iter, "cost:", "{:.2f}".format(loss))
 
     return intercept, cost
 

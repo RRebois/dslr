@@ -27,8 +27,18 @@ def accuracy_calc(df: DataFrame, df_predict: DataFrame):
     :param df: DataFrame
     :return: float
     """
+    accuracy = 0
+    df.to_csv("truth.csv", columns=["Index", "Hogwarts House"],
+                      index=False)
+    for i in range(len(df)):
+        if df['Hogwarts House'][i] == df_predict['Hogwarts House'][i]:
+            accuracy = accuracy + 1
+        else:
+            print(f"Diff line {i + 2}, index = {i}\n'{df_predict['Hogwarts House'][i]}' instead of ")
+    # accuracy = accuracy / len(df)
     accuracy = sklearn.metrics.accuracy_score(df['Hogwarts House'], df_predict['Hogwarts House'])
     print(f"Accuracy with sklearn library: {accuracy:.3f}\n")
+
     return
 
 
@@ -40,9 +50,9 @@ def standardization(df: DataFrame, titles: list) -> np.ndarray:
     :return: NumPy array
     """
     X = df[titles].to_numpy()
-    Xmean = X.mean(axis=0)
-    Xstd = X.std(axis=0)
-    X = (X - Xmean) / Xstd
+    X_mean = X.mean(axis=0)
+    X_std = X.std(axis=0)
+    X = (X - X_mean) / X_std
     return X
 
 
@@ -71,13 +81,11 @@ def ft_predict(df: DataFrame, thetas: dict, titles: list) -> DataFrame:
     # Save results in a dict for each house
     results = {house: sigmoid(np.dot(X, thetas[house][1:]) +
                             thetas[house][0]) for house in houses}
-
     # fill df['Hogwarts House'] with house having highest result
     df['Hogwarts House'] = [max(results, key=lambda house:
     results[house][i]) for i in range(len(df))]
 
-    print(f"{df['Hogwarts House']}\n")
-    df.insert(0, "Index", df.index)
+    # df.insert(0, "Index", df.index)
     return df
 
 
@@ -103,13 +111,14 @@ def main():
             'Transfiguration',
             'Charms',
         ]
-        df = df.iloc[:, 6:]
+        # df = df.iloc[:, 6:]
         clean_data(df, titles)
         print(df)
         thetas = load_thetas(sys.argv[2])
         df_predict = ft_predict(df, thetas, titles)
         df_predict.to_csv("houses_st.csv", columns=["Index", "Hogwarts House"],
                   index=False)
+        print("\nPredictions done and saved in houses_st.csv\n")
         if sys.argv[1] == "test_data.csv":
             accuracy_calc(df, df_predict)
 
