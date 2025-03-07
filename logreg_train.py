@@ -61,7 +61,7 @@ def batch_gd(theta: np.ndarray, intercept: float, X: np.ndarray, y: np.ndarray, 
     """
 
     lr = 0.01
-    n_iters = 100 # to have a bad accuracy, otherwise 1000
+    n_iters = 1000
     for iter in range(n_iters):
         y_pred = sigmoid(np.dot(X, theta) + intercept)
 
@@ -225,11 +225,7 @@ def clean_data(df: DataFrame, titles: list) -> DataFrame:
     :return: cleaned dataframe
     """
     df[titles] = df[titles].fillna(df[titles].mean())
-    train_data = df.sample(frac=0.75, replace=False)
-    test_data = df.drop(train_data.index)
-    train_data.to_csv("train_data.csv", index=False)
-    test_data.to_csv("test_data.csv", index=False)
-    return train_data
+    return df
 
 
 def main():
