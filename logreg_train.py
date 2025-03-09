@@ -235,11 +235,6 @@ def clean_data(df: DataFrame, titles: list) -> DataFrame:
     :return: cleaned dataframe
     """
     df[titles] = df[titles].fillna(df[titles].mean())
-    train_data = df.sample(frac=0.75, replace=False)
-    test_data = df.drop(train_data.index)
-    train_data.to_csv("train_data.csv", index=False)
-    test_data.to_csv("test_data.csv", index=False)
-    return train_data
 
 
 def main():
@@ -254,7 +249,6 @@ def main():
         titles = [
             'Astronomy',#
             'Herbology',#
-            "Defense Against the Dark Arts",#
             'Divination',
             'Muggle Studies',
             'Ancient Runes',#
@@ -263,8 +257,8 @@ def main():
             'Charms',
             'Flying'#
         ]
-        train_data = clean_data(df, titles)
-        train_logreg(train_data, titles, algo)
+        clean_data(df, titles)
+        train_logreg(df, titles, algo)
 
     except Exception as e:
         print("Error:", e)

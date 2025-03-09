@@ -99,7 +99,6 @@ def main():
         titles = [
             'Astronomy',#
             'Herbology',#
-            "Defense Against the Dark Arts",#
             'Divination',
             'Muggle Studies',
             'Ancient Runes',#
@@ -109,9 +108,7 @@ def main():
             'Flying'#
         ]
         df = df.iloc[:, 6:]
-        df.dropna(inplace=True)
-        df.reset_index(drop=True, inplace=True)
-        # clean_data(df, titles)
+        clean_data(df, titles)
         print(df)
         thetas = load_thetas(sys.argv[2])
         df_predict = ft_predict(df, thetas, titles)
