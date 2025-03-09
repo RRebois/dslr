@@ -39,12 +39,16 @@ def model_accuracy(X: np.ndarray, thetas: dict, col: pd.Series):
     Computes the accuracy of the model.
     :param X: NumPy array
     :param thetas: np.ndarray of theta for the features + intercept
-    :param col: pandas Series
+    :param col: pandas Series with Hogwarts houses
     :return: float
     """
     houses = col.unique()
-    acc = np.max([sigmoid(np.dot(X, thetas[house][1:]) + thetas[house][0]) for
-                 house in houses])
+    probabilities = np.array([
+        sigmoid(np.dot(X, thetas[house][1:]) + thetas[house][0])
+        for house in houses
+    ]).T
+    predictions = np.array(houses)[np.argmax(probabilities, axis=1)]
+    acc = np.mean(predictions == col.values)
     print("\nModel accuracy: ", "{:.3f}".format(acc))
 
 
@@ -248,11 +252,16 @@ def main():
         algo = sys.argv[2]
         df = load(sys.argv[1])
         titles = [
+            'Astronomy',#
+            'Herbology',#
+            "Defense Against the Dark Arts",#
             'Divination',
             'Muggle Studies',
-            'Ancient Runes',
+            'Ancient Runes',#
+            'History of Magic',#
             'Transfiguration',
             'Charms',
+            'Flying'#
         ]
         train_data = clean_data(df, titles)
         train_logreg(train_data, titles, algo)

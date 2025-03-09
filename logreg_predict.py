@@ -97,18 +97,25 @@ def main():
                 "python3 logreg_train.py <test_file> <thetas_file>")
         df = load(sys.argv[1])
         titles = [
+            'Astronomy',#
+            'Herbology',#
+            "Defense Against the Dark Arts",#
             'Divination',
             'Muggle Studies',
-            'Ancient Runes',
+            'Ancient Runes',#
+            'History of Magic',#
             'Transfiguration',
             'Charms',
+            'Flying'#
         ]
         df = df.iloc[:, 6:]
-        clean_data(df, titles)
+        df.dropna(inplace=True)
+        df.reset_index(drop=True, inplace=True)
+        # clean_data(df, titles)
         print(df)
         thetas = load_thetas(sys.argv[2])
         df_predict = ft_predict(df, thetas, titles)
-        df_predict.to_csv("houses_st.csv", columns=["Index", "Hogwarts House"],
+        df_predict.to_csv("houses.csv", columns=["Index", "Hogwarts House"],
                   index=False)
         if sys.argv[1] == "test_data.csv":
             accuracy_calc(df, df_predict)

@@ -29,6 +29,8 @@ def main():
         print(f"Cumulative Variances:\n{pca_cumulate}")
         print(f"Number of components needed to explain 90% of the variance : "
               f"{len(pca_cumulate[pca_cumulate < 90]) + 1}")
+        print(f"Number of components needed to explain 98% of the variance : "
+            f"{len(pca_cumulate[pca_cumulate < 98]) + 1}")
 
     except Exception as e:
         print(f"Error: {e}")
